@@ -1,26 +1,52 @@
 import ToDoForm from "../components/Todo/ToDoForm";
 import ToDoList from "../components/Todo/ToDoList";
 import { MongoClient } from "mongodb";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function HomePage(props) {
+  const [todos, setTodos] = useState([]);
 
-  const [todos,setTodos] = useState (props.todos || [])
- 
-  const  addTodoHandler = async(todo) => {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("/api/all-todo");
+        const data = await response.json();
+        if (data) {
+        //   const todos = Object.entries(data).map(([id, todo]) => ({
+        //     id,
+        //     ...todo,
+        //   }));
+        // setTodos(todos);
+        setTodos(data.todos);
+        console.log("gettting data",data);
+      }} catch (error) {
+        console.error("Error fetching todos:", error);
+      }
+    
+   
+    }
 
-    const response = await fetch('/api/new-todo',{
-        method:"POST",
-        body:JSON.stringify(todo),
-        headers:{
-            'Content-Type':'application/json'
-        }
-       })
+    fetchData();
+  }, []);
 
-       const data = await response.json()
-        const newTodo = { id: data.id, text: data.text };
-      setTodos((prevTodos) => [...prevTodos, newTodo]);
-     
+  const addTodoHandler = async (todo) => {
+    const { text } = todo;
+
+    setTodos((prevTodos) => [
+      ...prevTodos,
+      { _id: Math.random().toString(), text: todo.text },
+    ]);
+
+    const response = await fetch("/api/new-todo", {
+      method: "POST",
+      body: JSON.stringify(todo),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+    console.log(data)
   };
 
   // const deleteTodoHandler = (todoId) => {
@@ -36,26 +62,25 @@ function HomePage(props) {
 }
 
 export async function getStaticProps() {
+  const client = await MongoClient.connect(
+    "mongodb+srv://roshgupta17:Anika123456@cluster0.dlnrdlu.mongodb.net/todos?retryWrites=true&w=majority"
+  );
+  const db = client.db();
+  const todosCollection = db.collection("todos");
 
-    const client = await MongoClient.connect('mongodb+srv://roshgupta17:Anika123456@cluster0.dlnrdlu.mongodb.net/todos?retryWrites=true&w=majority')
-    const db = client.db();
-    const todosCollection = db.collection('todos');
-  
-    const todos = await todosCollection.find().toArray();
-    client.close()
-  
-    return {
-      props: {
-        todos: todos.map(todo=>({
-          text:todo.text,
-          id:todo._id.toString()
-  
-        }))
-      },
-      
-      revalidate:10
-    };
-  }
+  const todos = await todosCollection.find().toArray();
+  client.close();
+
+  return {
+    props: {
+      todos: todos.map((todo) => ({
+        text: todo.text,
+        id: todo._id.toString(),
+      })),
+    },
+
+    revalidate: 10,
+  };
+}
 
 export default HomePage;
-
