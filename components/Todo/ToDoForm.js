@@ -15,7 +15,7 @@ const ToDoForm = (props) => {
       alert("Please enter a valid todo!");
       return;
     }
-    props.onAddTodo({text:enteredValue});
+    props.onAddTodo({text:enteredValue,status:"incomplete"});
     setEnteredValue("");
   };
 

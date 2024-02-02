@@ -30,11 +30,11 @@ function HomePage(props) {
   }, []);
 
   const addTodoHandler = async (todo) => {
-    const { text } = todo;
+    const { text,status } = todo;
 
     setTodos((prevTodos) => [
       ...prevTodos,
-      { _id: Math.random().toString(), text: todo.text },
+      { _id: Math.random().toString(), text: todo.text,status:"incomplete" },
     ]);
 
     const response = await fetch("/api/new-todo", {
@@ -55,8 +55,9 @@ function HomePage(props) {
 
   return (
     <div>
-      <ToDoForm onAddTodo={addTodoHandler} />
       <ToDoList todos={todos} />
+      <ToDoForm onAddTodo={addTodoHandler} />
+      
     </div>
   );
 }
@@ -75,6 +76,7 @@ export async function getStaticProps() {
     props: {
       todos: todos.map((todo) => ({
         text: todo.text,
+        status:"incomplete",
         id: todo._id.toString(),
       })),
     },
