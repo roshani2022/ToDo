@@ -5,6 +5,7 @@ import Card from "../ui/Card";
 import classes from "./ToDoItem.module.css";
 
 const ToDoItem = (props) => {
+
   const deleteHandler = async(id) => {
     props.onDelete(id);
 
@@ -23,24 +24,22 @@ const ToDoItem = (props) => {
       
   };
 
-  // const completeHandler = async () => {
-  //   try {
-  //     const response = await fetch(`/api/update-todo/${props.id}`, {
-  //       method: "PUT",
-  //       body: JSON.stringify({ status: "complete" }),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error("Failed to update status.");
-  //     }
-  //     // Trigger a refresh to fetch incomplete todos
-  //     window.location.reload();
-  //   } catch (error) {
-  //     console.error("Error updating status:", error);
-  //   }
-  // };
+  const completeHandler = async (id) => {
+    try {
+      const response = await fetch(`/api/update-todo?id=${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ status: "complete" }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update status.");
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
+    }
+  };
 
   return (
     <Card>
@@ -51,7 +50,7 @@ const ToDoItem = (props) => {
           {props.text}
           <button>Edit</button>
           <button onClick={() => deleteHandler(props.id)}>Delete</button>
-          <button>Update</button>
+          <button onClick={() => completeHandler(props.id)}>Update</button>
         </li>
       }
     </Card>
