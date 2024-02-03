@@ -12,12 +12,8 @@ function HomePage(props) {
         const response = await fetch("/api/all-todo");
         const data = await response.json();
         if (data) {
-        //   const todos = Object.entries(data).map(([id, todo]) => ({
-        //     id,
-        //     ...todo,
-        //   }));
-        // setTodos(todos);
         setTodos(data.todos);
+        console.log(data)
         console.log("gettting data",data);
       }} catch (error) {
         console.error("Error fetching todos:", error);
@@ -25,7 +21,7 @@ function HomePage(props) {
     
    
     }
-
+   
     fetchData();
   }, []);
 
@@ -36,7 +32,7 @@ function HomePage(props) {
       ...prevTodos,
       { _id: Math.random().toString(), text: todo.text,status:"incomplete" },
     ]);
-
+     console.log(todo)
     const response = await fetch("/api/new-todo", {
       method: "POST",
       body: JSON.stringify(todo),
@@ -49,13 +45,16 @@ function HomePage(props) {
     console.log(data)
   };
 
-  // const deleteTodoHandler = (todoId) => {
-  //   setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== todoId));
-  // };
+  const deleteTodoHandler = async (todoId) => {
+      // Remove the todo from the local state
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo._id !== todoId));
+  
+  };
+  
 
   return (
     <div>
-      <ToDoList todos={todos} />
+      <ToDoList todos={todos}  onDelete={deleteTodoHandler}/>
       <ToDoForm onAddTodo={addTodoHandler} />
       
     </div>

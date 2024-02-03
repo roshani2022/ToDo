@@ -8,9 +8,9 @@ function ToDoList(props) {
       {props.todos.map((todo,index) => (
         <ToDoItem 
           key={index}
-          id={todo.id}
+          id={todo._id}
           text={todo.text}
-          onDelete={props.onDeleteItem}
+          onDelete={props.onDelete}
         />
       ))}
     </ul>
