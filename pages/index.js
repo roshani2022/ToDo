@@ -63,7 +63,7 @@ function HomePage(props) {
 
 export async function getStaticProps() {
   const client = await MongoClient.connect(
-    "mongodb+srv://roshgupta17:Anika123456@cluster0.dlnrdlu.mongodb.net/todos?retryWrites=true&w=majority"
+    process.env.MONGODB_URI
   );
   const db = client.db();
   const todosCollection = db.collection("todos");

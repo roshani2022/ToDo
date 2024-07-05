@@ -3,12 +3,9 @@ import { MongoClient, ObjectId } from "mongodb";
 async function handler(req, res) {
   if (req.method === "DELETE") {
     try {
-   
-      const  id  = req.query.id;
+      const id = req.query.id;
 
-      const client = await MongoClient.connect(
-        "mongodb+srv://roshgupta17:Anika123456@cluster0.dlnrdlu.mongodb.net/todos?retryWrites=true&w=majority"
-      );
+      const client = await MongoClient.connect(process.env.MONGODB_URI);
       const db = client.db();
       const todosCollection = db.collection("todos");
 

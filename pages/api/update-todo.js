@@ -1,21 +1,18 @@
-
-import { MongoClient,ObjectId } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 async function handler(req, res) {
   if (req.method === "PUT") {
     try {
-      const id  = req.query.id;
+      const id = req.query.id;
       const { status } = req.body;
 
-      const client = await MongoClient.connect(
-        "mongodb+srv://roshgupta17:Anika123456@cluster0.dlnrdlu.mongodb.net/todos?retryWrites=true&w=majority"
-      );
+      const client = await MongoClient.connect(process.env.MONGODB_URI);
       const db = client.db();
       const todosCollection = db.collection("todos");
 
       // Update the status of the todo item
       await todosCollection.updateOne(
-        { _id:new ObjectId(id) },
+        { _id: new ObjectId(id) },
         { $set: { status: status } }
       );
 
